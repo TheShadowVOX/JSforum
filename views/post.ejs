@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= post.title %> - JSForum</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            dark: {
+              900: '#0a0a0a',
+              800: '#1a1a1a',
+              700: '#2a2a2a',
+              600: '#3a3a3a',
+              500: '#4a4a4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+</head>
+<body class="bg-dark-900 text-gray-200 min-h-screen">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Post Container -->
+    <div class="bg-dark-800 rounded-xl shadow-lg overflow-hidden p-6 mb-6 border border-dark-700">
+      <div class="flex items-start justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-white mb-2"><%= post.title %></h1>
+          <div class="flex items-center text-sm text-gray-400 mb-4 space-x-3">
+            <span>by <strong class="text-indigo-300"><%= post.username %></strong></span>
+            <span>•</span>
+            <span><%= new Date(post.created_at).toLocaleString() %></span>
+            <span>•</span>
+            <span><%= post.views %> views</span>
+          </div>
+        </div>
+        <button class="text-gray-400 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+          </svg>
+        </button>
+      </div>
+      <div class="border-t border-dark-700 my-4"></div>
+      <div id="content" class="prose prose-invert max-w-none"></div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="bg-dark-800 rounded-xl shadow-lg overflow-hidden p-6 border border-dark-700">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-semibold text-white">Comments</h3>
+        <div class="text-sm text-gray-400">
+          <%= comments.length %> <%= comments.length === 1 ? 'comment' : 'comments' %>
+        </div>
+      </div>
+
+      <% function renderComments(comments, parentId = null, level = 0) { %>
+        <% comments.filter(c => c.parent_id === parentId).forEach(c => { %>
+      <div class="comment <% if (level) { %>reply<% } %> 
+            border-l-4 border-indigo-500 pl-4 mb-6 
+            <%= level ? 'ml-6' : '' %>">
+        <div class="flex items-start justify-between mb-2">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-dark-700 flex items-center justify-center mr-3">
+              <span class="text-sm font-medium"><%= c.username.charAt(0).toUpperCase() %></span>
+            </div>
+            <div>
+              <span class="font-medium text-white"><%= c.username %></span>
+              <span class="mx-2 text-gray-500">•</span>
+              <span class="text-xs text-gray-400"><%= new Date(c.created_at).toLocaleString() %></span>
+            </div>
+          </div>
+          <button class="text-gray-400 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+            </svg>
+          </button>
+        </div>
+        <p class="text-gray-300 mb-3 pl-11"><%= c.content %></p>
+
+        <div class="reactions flex flex-wrap items-center gap-2 mb-3 pl-11">
+          <% Object.entries(c.reactions).forEach(([emoji, count]) => { %>
+            <% if (['😧','😒','👿','😢','✔','🤣','👽','👍','😜','👏','😎','🎉','👀','✨','🤔'].includes(emoji)) { %>
+              <button class="reaction flex items-center gap-1 px-2 py-1 rounded-full bg-dark-700 hover:bg-dark-600 text-sm transition-colors"
+                data-cid="<%= c.id %>" data-emoji="<%= emoji %>">
+                <span><%= emoji %></span>
+                <span class="text-gray-400"><%= count %></span>
+              </button>
+            <% } %>
+          <% }) %>
+
+          <select class="custom-emoji text-sm px-2 py-1 rounded-full bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors text-gray-300"
+            data-cid="<%= c.id %>">
+            <option value="" class="bg-dark-800">+ Add reaction</option>
+            <option class="bg-dark-800">😧</option>
+            <option class="bg-dark-800">😒</option>
+            <option class="bg-dark-800">👿</option>
+            <option class="bg-dark-800">😢</option>
+            <option class="bg-dark-800">✔</option>
+            <option class="bg-dark-800">🤣</option>
+            <option class="bg-dark-800">👽</option>
+            <option class="bg-dark-800">👍</option>
+            <option class="bg-dark-800">😜</option>
+            <option class="bg-dark-800">👏</option>
+            <option class="bg-dark-800">😎</option>
+            <option class="bg-dark-800">🎉</option>
+            <option class="bg-dark-800">👀</option>
+            <option class="bg-dark-800">✨</option>
+            <option class="bg-dark-800">🤔</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-3 pl-11 mb-4">
+          <button class="reply-btn text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            </svg>
+            Reply
+          </button>
+          <span class="text-xs text-gray-500">•</span>
+          <button class="text-xs text-gray-400 hover:text-gray-300">
+            Report
+          </button>
+        </div>
+
+        <form method="POST" action="/comments/<%= post.id %>/reply" class="mt-3 hidden reply-form ml-11">
+          <input type="hidden" name="parent_id" value="<%= c.id %>">
+          <textarea name="content" placeholder="Write your reply..."
+            class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-gray-500"></textarea>
+          <div class="flex gap-2 mt-2">
+            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+              Post Reply
+            </button>
+            <button type="button" class="cancel-reply px-4 py-2 bg-dark-600 text-gray-300 rounded-lg hover:bg-dark-500 transition-colors">
+              Cancel
+            </button>
+          </div>
+        </form>
+
+        <% renderComments(comments, c.id, level + 1); %>
+      </div>
+        <% }) %>
+      <% } %>
+      <% renderComments(comments); %>
+
+      <!-- New Comment Form -->
+      <form method="POST" action="/comments/<%= post.id %>" class="mt-6">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-full bg-dark-700 flex items-center justify-center">
+            <span class="text-sm font-medium">Y</span>
+          </div>
+        </div>
+        <textarea name="content" placeholder="Add a comment..." required
+          class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-gray-500"></textarea>
+        <button type="submit" 
+          class="mt-3 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+          Post Comment
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const raw = `<%= JSON.stringify(post.content).slice(1, -1) %>`;
+  document.getElementById('content').innerHTML = marked.parse(raw);
+  document.querySelectorAll('pre code').forEach((block) => {
+    hljs.highlightElement(block);
+  });
+});
+
+
+    // Reply button functionality
+    document.querySelectorAll('.reply-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const form = btn.closest('.comment').querySelector('.reply-form');
+        form.classList.toggle('hidden');
+        if (!form.classList.contains('hidden')) {
+          form.querySelector('textarea').focus();
+        }
+      });
+    });
+
+    // Cancel reply buttons
+    document.querySelectorAll('.cancel-reply').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.closest('.reply-form').classList.add('hidden');
+      });
+    });
+
+    // Reaction buttons
+    document.querySelectorAll('.reaction').forEach(btn => {
+      btn.onclick = () => {
+        fetch('/react', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            comment_id: btn.dataset.cid,
+            emoji: btn.dataset.emoji
+          })
+        }).then(() => location.reload());
+      };
+    });
+
+    // Custom emoji select
+    document.querySelectorAll('.custom-emoji').forEach(select => {
+      select.onchange = () => {
+        const emoji = select.value;
+        if (!emoji) return;
+        fetch('/react', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            comment_id: select.dataset.cid,
+            emoji
+          })
+        }).then(() => location.reload());
+      };
+    });
+  </script>
+</body>
+</html>
