@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Settings - JSForum</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            discord: {
+              DEFAULT: '#5865F2',
+              dark: '#4752C4',
+            },
+            dark: {
+              900: '#0a0a0a',
+              800: '#1a1a1a',
+              700: '#2a2a2a',
+              600: '#3a3a3a',
+            },
+            danger: {
+              DEFAULT: '#e74c3c',
+              dark: '#c0392b',
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.3s ease-in-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-gradient {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600;
+      }
+      .bg-grid {
+        background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-gray-100 min-h-screen">
+  <!-- Background elements -->
+  <div class="fixed inset-0 bg-grid opacity-20 -z-10"></div>
+  <div class="fixed inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20 -z-20"></div>
+
+  <!-- Navigation -->
+  <nav class="border-b border-dark-700/50 backdrop-blur-md">
+    <div class="container mx-auto px-6 py-3">
+      <div class="flex items-center justify-between">
+        <a href="/" class="text-2xl font-bold text-gradient">JSForum</a>
+        <div class="flex items-center space-x-4">
+          <a href="/home" class="px-4 py-2 rounded-md text-gray-300 hover:text-white hover:bg-dark-700 transition-colors">
+            <i class="fas fa-home mr-2"></i> Home
+          </a>
+          <div class="flex items-center space-x-3 ml-4">
+            <img class="w-10 h-10 rounded-full border-2 border-discord" 
+                 src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" 
+                 alt="Profile picture">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-6 py-8 max-w-3xl">
+    <div class="bg-dark-800/50 border border-dark-700 rounded-xl overflow-hidden backdrop-blur-sm animate-fade-in">
+      <!-- Header -->
+      <div class="border-b border-dark-700 px-6 py-4">
+        <h1 class="text-2xl font-bold flex items-center">
+          <i class="fas fa-user-cog text-blue-400 mr-3"></i>
+          <span>Account Settings</span>
+        </h1>
+      </div>
+
+      <!-- Account Information -->
+      <div class="p-6 space-y-6">
+        <!-- Profile Section -->
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+          <div class="relative">
+            <img class="w-24 h-24 rounded-full border-2 border-discord" 
+                 src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" 
+                 alt="Profile picture">
+            <button class="absolute -bottom-2 -right-2 bg-discord text-white p-2 rounded-full hover:bg-discord-dark transition-colors">
+              <i class="fas fa-camera text-sm"></i>
+            </button>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold mb-1"><%= userData.username %></h2>
+            <p class="text-gray-400 text-sm">Member since <%= new Date(userData.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-dark-700 text-xs rounded-full text-blue-400">
+                <i class="fas fa-check-circle mr-1"></i> Verified
+              </span>
+              <span class="px-2 py-1 bg-dark-700 text-xs rounded-full text-green-400">
+                <i class="fas fa-shield-alt mr-1"></i> Protected
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Details -->
+        <div class="space-y-4">
+          <div class="border-b border-dark-700 pb-4">
+            <h3 class="text-lg font-medium mb-3 flex items-center">
+              <i class="fas fa-id-card text-purple-400 mr-2"></i>
+              Account Information
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Username</label>
+                <div class="px-4 py-2.5 bg-dark-700 rounded-md font-mono"><%= userData.username %></div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Discord ID</label>
+                <div class="px-4 py-2.5 bg-dark-700 rounded-md font-mono"><%= userData.id %></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email Security -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-medium flex items-center">
+                <i class="fas fa-envelope text-orange-400 mr-2"></i>
+                Email Address
+              </h3>
+              <button id="toggleEmailBtn" class="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                <i class="fas fa-eye mr-1"></i> Show Email
+              </button>
+            </div>
+            
+            <div class="relative">
+              <div id="emailValue" class="px-4 py-2.5 bg-dark-700 rounded-md font-mono blur-md hover:blur-none transition-all duration-300 cursor-pointer select-none" 
+                   data-email="<%= userData.email %>">
+                <%= userData.email.replace(/./g, '•') %>
+              </div>
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none" id="emailOverlay">
+                <span class="text-xs text-gray-400 bg-dark-800/90 px-2 py-1 rounded">Click to reveal</span>
+              </div>
+            </div>
+            
+            <p class="mt-2 text-xs text-gray-500">
+              <i class="fas fa-info-circle mr-1"></i> Your email is kept private and used only for account security.
+            </p>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="border-t border-red-900/50 mt-8 pt-6">
+          <h3 class="text-lg font-medium mb-4 flex items-center text-red-400">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            Danger Zone
+          </h3>
+          
+          <form method="POST" action="/account/delete" onsubmit="return confirmDeletion()">
+            <div class="p-4 bg-dark-700/50 border border-red-900/50 rounded-lg">
+              <h4 class="font-medium text-red-400 mb-2">Delete Account</h4>
+              <p class="text-sm text-gray-400 mb-4">
+                This will permanently erase all your data, posts, and comments. This action cannot be undone.
+              </p>
+              <button type="submit" class="px-4 py-2 bg-danger hover:bg-danger-dark text-white rounded-md font-medium transition-colors flex items-center">
+                <i class="fas fa-trash-alt mr-2"></i> Destroy Account Permanently
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Enhanced email toggle functionality
+    const emailValue = document.getElementById('emailValue');
+    const toggleEmailBtn = document.getElementById('toggleEmailBtn');
+    const emailOverlay = document.getElementById('emailOverlay');
+    
+    function toggleEmail() {
+      if (emailValue.classList.contains('blur-md')) {
+        emailValue.classList.remove('blur-md');
+        emailValue.textContent = emailValue.dataset.email;
+        toggleEmailBtn.innerHTML = '<i class="fas fa-eye-slash mr-1"></i> Hide Email';
+        emailOverlay.classList.add('hidden');
+      } else {
+        emailValue.classList.add('blur-md');
+        emailValue.textContent = emailValue.dataset.email.replace(/./g, '•');
+        toggleEmailBtn.innerHTML = '<i class="fas fa-eye mr-1"></i> Show Email';
+        emailOverlay.classList.remove('hidden');
+      }
+    }
+    
+    emailValue.addEventListener('click', toggleEmail);
+    toggleEmailBtn.addEventListener('click', toggleEmail);
+    
+    function confirmDeletion() {
+      return confirm('⚠️ WARNING: This will PERMANENTLY delete your account and all associated data.\n\nAre you absolutely sure you want to continue?');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "JSforum",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/TheShadowVOX/JSforum",
+  "author": "VOX <codeinshadows.speakinvox@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "mysql2": "^3.14.2",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "scripts": {
+    "posts": "node scripts/posts.js",
+    "users": "node scripts/users.js",
+    "comments": "node scripts/comments.js",
+    "reactions": "node scripts/reactions.js",
+    "migrate:posts": "node scripts/migration/posts.js",
+    "migrate:commets": "node scripts/migration/nullable_author_id.js"
+  }
+}
